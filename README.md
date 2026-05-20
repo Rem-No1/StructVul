@@ -107,7 +107,6 @@ Supported prompt strategies include:
 
 - `zero_shot_direct`
 - `zero_shot_cot`
-- `zero_shot_cot_explicit`
 - `few_shot_direct`
 - `few_shot_cot`
 - `few_shot_cot_explicit`
