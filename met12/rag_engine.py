@@ -13,7 +13,10 @@ from met12.cpg_utils import extract_cpg_structure
 
 
 DASHSCOPE_API_KEY_ENV = "DASHSCOPE_API_KEY"
+# 可使用api，但效果可能不如qwen3-embedding-0.6b
 EMBEDDING_MODEL_NAME = "text-embedding-v3"
+# 自己部署，使用qwen3-embedding-0.6b模型，效果更好，但需要更多资源
+# EMBEDDING_MODEL_NAME = "qwen3-embedding-0.6b"  
 
 
 def require_env(name: str) -> str:
