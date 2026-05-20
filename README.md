@@ -109,7 +109,6 @@ Supported prompt strategies include:
 - `zero_shot_cot`
 - `few_shot_direct`
 - `few_shot_cot`
-- `few_shot_cot_explicit`
 
 You can also run all configured datasets and strategies:
 
