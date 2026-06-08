@@ -83,6 +83,8 @@ Datasets are JSON lists. Each record is expected to contain fields similar to:
 }
 ```
 
+The complete data is at https://pan.baidu.com/s/1aKLViOG31OYVDvS8_S_1Wg?pwd=v23n Extraction code: v23n
+
 Common dataset directories:
 
 - `dataset_v1/`, `dataset_v2/`: base datasets
