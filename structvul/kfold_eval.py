@@ -8,8 +8,8 @@ from typing import Any, Dict, List
 
 from tqdm import tqdm
 
-import met12.test as dual_test
-from met12.rag_engine import VulnRAG
+from . import test as dual_test
+from .rag_engine import VulnRAG
 
 # ================= K-Fold Config =================
 K_FOLDS = 5
@@ -22,36 +22,36 @@ CODE_MODEL_NAME = "qwen3-32b"
 # CODE_MODEL_NAME = "deepseek-chat"
 # CODE_MODEL_NAME = "gpt-5.1-chat-latest"
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1/BaseCodeFilesReason.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1/{CODE_MODEL_NAME}_kfold_dual_system")
-# # # 永久存储目录：向量库会长期保存在这里，重启后仍可复用（除非手动删除）
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1/{CODE_MODEL_NAME}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1/BaseCodeFilesReason.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1/{CODE_MODEL_NAME}_kfold_dual_system")
+# # # Persistent storage directory: vector stores remain here and can be reused after restart unless manually deleted.
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1/{CODE_MODEL_NAME}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_control/BaseCodeFilesReason_control.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_control/{CODE_MODEL_NAME}_kfold_dual_system")
-# # # 永久存储目录：向量库会长期保存在这里，重启后仍可复用（除非手动删除）
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_control/{CODE_MODEL_NAME}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_control/BaseCodeFilesReason_control.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_control/{CODE_MODEL_NAME}_kfold_dual_system")
+# # # Persistent storage directory: vector stores remain here and can be reused after restart unless manually deleted.
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_control/{CODE_MODEL_NAME}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_dataflow/BaseCodeFilesReason_dataflow.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_dataflow/{CODE_MODEL_NAME}_kfold_dual_system")
-# # # # 永久存储目录：向量库会长期保存在这里，重启后仍可复用（除非手动删除）
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_dataflow/{CODE_MODEL_NAME}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_dataflow/BaseCodeFilesReason_dataflow.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_dataflow/{CODE_MODEL_NAME}_kfold_dual_system")
+# # # # Persistent storage directory: vector stores remain here and can be reused after restart unless manually deleted.
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_dataflow/{CODE_MODEL_NAME}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_expression/BaseCodeFilesReason_expression.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_expression/{CODE_MODEL_NAME}_kfold_dual_system")
-# # # # # 永久存储目录：向量库会长期保存在这里，重启后仍可复用（除非手动删除）
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_expression/{CODE_MODEL_NAME}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_expression/BaseCodeFilesReason_expression.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_expression/{CODE_MODEL_NAME}_kfold_dual_system")
+# # # # # Persistent storage directory: vector stores remain here and can be reused after restart unless manually deleted.
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_expression/{CODE_MODEL_NAME}_kfold_rag_store")
 
-DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_lexical/BaseCodeFilesReason_lexical.json")
-OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_lexical/{CODE_MODEL_NAME}_kfold_dual_system")
-# # 永久存储目录：向量库会长期保存在这里，重启后仍可复用（除非手动删除）
-PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_lexical/{CODE_MODEL_NAME}_kfold_rag_store")
+DATASET_PATH = Path("xxxx/dataset_v1_lexical/BaseCodeFilesReason_lexical.json")
+OUTPUT_DIR = Path(f"xxxx/dataset_v1_lexical/{CODE_MODEL_NAME}_kfold_dual_system")
+# # Persistent storage directory: vector stores remain here and can be reused after restart unless manually deleted.
+PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_lexical/{CODE_MODEL_NAME}_kfold_rag_store")
 
 # RUN_ID = time.strftime("%Y%m%d_%H%M%S")
-RUN_ID="met12_seed"+str(RANDOM_SEED)
+RUN_ID="structvul_seed"+str(RANDOM_SEED)
 RUN_DIR = OUTPUT_DIR / RUN_ID
-# 当你修改了 CPG/Embedding 逻辑时，手动增加版本号可避免旧库污染
-RAG_STORE_VERSION = "vmet12"+str(RANDOM_SEED)
+# Increment this version when CPG or embedding logic changes to avoid contaminating new runs with old stores.
+RAG_STORE_VERSION = "vstructvul"+str(RANDOM_SEED)
 
 
 def _safe_div(a: float, b: float) -> float:
@@ -92,7 +92,7 @@ def build_stratified_folds(data: List[Dict[str, Any]], k: int, seed: int) -> Lis
 
 def build_fold_signature(train_samples: List[Dict[str, Any]]) -> str:
     """
-    基于训练集样本构造稳定签名，用于复用同一 fold 的向量库缓存。
+    Build a stable signature from training samples so the same fold can reuse its vector-store cache.
     """
     basis: List[str] = []
     for item in train_samples:
@@ -170,7 +170,7 @@ def evaluate_fold(
         with train_json_path.open("w", encoding="utf-8") as f:
             json.dump(train_samples, f, ensure_ascii=False)
 
-    # 每个 fold 只用训练集构建知识库；若缓存已有则直接复用
+    # Build each fold knowledge base only from the training set; reuse the cache when it already exists.
     dual_test.rag_engine = VulnRAG(
         dataset_path=str(train_json_path),
         persist_dir=str(fold_rag_dir),

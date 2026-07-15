@@ -26,11 +26,11 @@ dataset_name_id = "1" # 1对应SV-TrustEval-C,2对应SecLLMHolmes
 # RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_lexical/{MODEL_NAME}_kfold_vanilla_rag\\vanilla_rag_seed1\\kfold_all_results.json"
 # =======================================
 
-# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}/{MODEL_NAME}_kfold_dual_system/met12_seed1/kfold_all_results.json"
-# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_dataflow/{MODEL_NAME}_kfold_dual_system/met12_seed1/kfold_all_results.json"
-# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_control/{MODEL_NAME}_kfold_dual_system/met12_seed1/kfold_all_results.json"
-# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_expression/{MODEL_NAME}_kfold_dual_system/met12_seed1/kfold_all_results.json"
-RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_lexical/{MODEL_NAME}_kfold_dual_system/met12_seed1/kfold_all_results.json"
+# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}/{MODEL_NAME}_kfold_dual_system/structvul_seed1/kfold_all_results.json"
+# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_dataflow/{MODEL_NAME}_kfold_dual_system/structvul_seed1/kfold_all_results.json"
+# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_control/{MODEL_NAME}_kfold_dual_system/structvul_seed1/kfold_all_results.json"
+# RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_expression/{MODEL_NAME}_kfold_dual_system/structvul_seed1/kfold_all_results.json"
+RESULT_FILE = f"D:/LIHAOZE/bishe/thecode/eee/dataset_v{dataset_name_id}_lexical/{MODEL_NAME}_kfold_dual_system/structvul_seed1/kfold_all_results.json"
 
 
 

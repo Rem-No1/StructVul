@@ -15,7 +15,7 @@ The project includes:
 ```text
 .
 |-- base/                    # Baseline LLM prediction, judging, batch runs, metrics
-|-- met12/                   # CPG/RAG evaluation and k-fold experiment scripts
+|-- structvul/               # CPG/RAG evaluation and k-fold experiment scripts
 |-- robust_transform/        # Semantic-preserving code transformation tools
 |-- dataset_v1*/             # Dataset v1 and transformed variants
 |-- dataset_v2*/             # Dataset v2 and transformed variants
@@ -143,10 +143,10 @@ The RAG evaluation uses DashScope embeddings/reranking and ChromaDB persistence.
 Main script:
 
 ```powershell
-python -m met12.kfold_eval
+python -m structvul.kfold_eval
 ```
 
-Before running, check the configuration constants at the top of `met12/kfold_eval.py`, especially:
+Before running, check the configuration constants at the top of `structvul/kfold_eval.py`, especially:
 
 - `K_FOLDS`
 - `RANDOM_SEED`

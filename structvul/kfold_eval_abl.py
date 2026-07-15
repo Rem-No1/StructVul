@@ -9,12 +9,12 @@ from typing import Any, Callable, Dict, List, Tuple
 
 from tqdm import tqdm
 
-import met12.test as dual_test
-from met12.build_prompt import (
+from . import test as dual_test
+from .build_prompt import (
     build_code_prediction_prompts as build_full_prompts,
     build_judge_prompts,
 )
-from met12.rag_engine import VulnRAG as StructuredVulnRAG
+from .rag_engine import VulnRAG as StructuredVulnRAG
 
 
 # ================= K-Fold Config =================
@@ -31,25 +31,25 @@ CODE_MODEL_NAME = dual_test.CODE_MODEL_NAME
 DEFAULT_MODE = "no_structured_retrieval"
 
 
-DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1/BaseCodeFilesReason.json")
-OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
-PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
+DATASET_PATH = Path("xxxx/dataset_v1/BaseCodeFilesReason.json")
+OUTPUT_DIR = Path(f"xxxx/dataset_v1/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
+PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_control/BaseCodeFilesReason_control.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_control/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_control/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_control/BaseCodeFilesReason_control.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_control/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_control/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_dataflow/BaseCodeFilesReason_dataflow.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_dataflow/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_dataflow/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_dataflow/BaseCodeFilesReason_dataflow.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_dataflow/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_dataflow/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_expression/BaseCodeFilesReason_expression.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_expression/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_expression/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_expression/BaseCodeFilesReason_expression.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_expression/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_expression/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
 
-# DATASET_PATH = Path("D:/LIHAOZE/bishe/thecode/eee/dataset_v1_lexical/BaseCodeFilesReason_lexical.json")
-# OUTPUT_DIR = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_lexical/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
-# PERSISTENT_RAG_STORE_ROOT = Path(f"D:/LIHAOZE/bishe/thecode/eee/dataset_v1_lexical/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
+# DATASET_PATH = Path("xxxx/dataset_v1_lexical/BaseCodeFilesReason_lexical.json")
+# OUTPUT_DIR = Path(f"xxxx/dataset_v1_lexical/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_dual_system")
+# PERSISTENT_RAG_STORE_ROOT = Path(f"xxxx/dataset_v1_lexical/{CODE_MODEL_NAME}_{DEFAULT_MODE}_kfold_rag_store")
 
 
 RAG_TOP_K = 3
@@ -66,11 +66,11 @@ class AblationConfig:
 
     @property
     def run_id(self) -> str:
-        return f"met12_abl_{self.name}_seed{RANDOM_SEED}"
+        return f"structvul_abl_{self.name}_seed{RANDOM_SEED}"
 
     @property
     def rag_store_version(self) -> str:
-        return f"vmet12_abl_{self.name}_seed{RANDOM_SEED}"
+        return f"vstructvul_abl_{self.name}_seed{RANDOM_SEED}"
 
     @property
     def retrieval_mode(self) -> str:
@@ -103,7 +103,7 @@ ABLATION_CONFIGS: Dict[str, AblationConfig] = {
 class RawCodeAblationRAG(StructuredVulnRAG):
     """
     Ablation RAG:
-    - keep the same embedding / rerank / metadata pipeline as met12
+    - keep the same embedding / rerank / metadata pipeline as StructVul
     - remove CPG structured representation
     - index and query raw code directly
     """
@@ -538,7 +538,7 @@ def run_single_experiment(config: AblationConfig) -> None:
     report = {
         "run_id": config.run_id,
         "dataset_path": str(DATASET_PATH),
-        "method": "met12_ablation",
+        "method": "structvul_ablation",
         "ablation_mode": config.name,
         "retrieval_mode": config.retrieval_mode,
         "cot_mode": config.cot_mode,
@@ -577,7 +577,7 @@ def run_single_experiment(config: AblationConfig) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run met12 k-fold ablation experiments for structured retrieval and CoT."
+        description="Run StructVul k-fold ablation experiments for structured retrieval and CoT."
     )
     parser.add_argument(
         "--mode",

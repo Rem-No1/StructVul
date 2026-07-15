@@ -4,14 +4,14 @@ import subprocess
 import tempfile
 import re
 
-# 如果 joern 命令不在环境变量中，请修改这里为绝对路径，例如 "/opt/joern/joern-parse"
+# If the joern command is not in PATH, set this to an absolute path such as "/opt/joern/joern-parse".
 JOERN_PARSE_CMD = "joern-parse" 
 JOERN_EXPORT_CMD = "joern-export"
 
 def extract_cpg_structure(code: str, temp_dir: str = ".tmp_cpg") -> str:
     """
-    使用 Joern 提取代码的 CPG 信息，并转化为一种适合 Embedding 的文本格式。
-    这里我们提取 AST (结构) 和 CDG/DDG (流) 的摘要。
+    Extract CPG information with Joern and convert it into text suitable for embedding.
+    This extracts summaries of the AST structure and CDG/DDG flows.
     """
     if not code or len(code.strip()) == 0:
         return ""
@@ -19,7 +19,7 @@ def extract_cpg_structure(code: str, temp_dir: str = ".tmp_cpg") -> str:
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
 
-    # 1. 将代码写入临时文件
+    # 1. Write the code to a temporary file.
     code_path = os.path.join(temp_dir, "source.c")
     with open(code_path, "w", encoding="utf-8") as f:
         f.write(code)
@@ -27,62 +27,62 @@ def extract_cpg_structure(code: str, temp_dir: str = ".tmp_cpg") -> str:
     cpg_bin_path = os.path.join(temp_dir, "cpg.bin")
     
     try:
-        # 2. 调用 joern-parse 生成二进制图
-        # 抑制输出以保持控制台整洁
+        # 2. Call joern-parse to generate the binary graph.
+        # Suppress output to keep the console clean.
         subprocess.run(
             [JOERN_PARSE_CMD, code_path, "--out", cpg_bin_path],
             check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
 
-        # 3. 导出图结构 (这里导出为 dot 格式，包含 AST, CFG 等)
-        # --repr ast 提取抽象语法树，结构特征最明显
-        # 你也可以尝试 --repr cpg14 获得更全的信息，但 token 会爆炸
+        # 3. Export the graph structure as dot, including AST, CFG, and related graphs.
+        # --repr ast extracts the abstract syntax tree, where structural features are clearest.
+        # --repr cpg14 provides fuller information, but can produce too many tokens.
         out_dot_path = os.path.join(temp_dir, "out.dot")
         subprocess.run(
             [JOERN_EXPORT_CMD, cpg_bin_path, "--repr", "ast", "--out", out_dot_path],
             check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
         
-        # 4. 读取 dot 文件并进行简化处理
-        # 主要是提取节点类型和边，去除具体的行号噪音
+        # 4. Read the dot output and simplify it.
+        # Extract node types and edges while removing line-number noise.
         graph_text = ""
         if os.path.exists(out_dot_path):
             with open(out_dot_path, "r", encoding="utf-8") as f:
                 content = f.read()
-                # 简单的正则清洗，提取 Label 和 结构关系
-                # 例如: "CALL" -> "IDENTIFIER"
+                # Simple regex cleanup to extract labels and structural relationships.
+                # For example: "CALL" -> "IDENTIFIER".
                 matches = re.findall(r'label\s*=\s*"([^"]+)"', content)
-                # 将图节点序列化为线性文本，保留结构语义
-                graph_text = " -> ".join(matches[:200]) # 限制长度，防止 Token 溢出
+                # Serialize graph nodes into linear text while preserving structural semantics.
+                graph_text = " -> ".join(matches[:200]) # Limit length to avoid token overflow.
 
         return f"Graph Structure: {graph_text}\nRaw Code:\n{code}"
 
     except Exception as e:
-        # 如果 Joern 调用失败（没安装），为了代码不崩，回退到使用原始代码
+        # If Joern fails, fall back to raw code so the pipeline does not crash.
         # print(f"⚠️ Joern extraction failed: {e}. Using raw code.")
         return code 
     finally:
-        # 清理临时文件
+        # Clean up temporary files.
         if os.path.exists(code_path): os.remove(code_path)
         if os.path.exists(cpg_bin_path): os.remove(cpg_bin_path)
-        # dot 导出通常是一个目录
+        # Dot export is usually a directory.
         if os.path.exists(out_dot_path): 
             import shutil
             shutil.rmtree(out_dot_path, ignore_errors=True)
 
-# 测试用
+# Test helper.
 if __name__ == "__main__":
     code = "int main() { char buf[10]; strcpy(buf, input); }"
     print(extract_cpg_structure(code))
 
 
-#没有安装 Joern 的环境，暂时注释掉 Joern 相关的代码，改用 tree-sitter 来提取结构信息。
+# In environments without Joern, comment out Joern code and use tree-sitter for structure extraction.
 # import tree_sitter
 # import tree_sitter_c
 
 # def extract_cpg_structure(code: str, temp_dir: str = ".tmp_cpg") -> str:
 #     """
-#     [高精度修复版] 修复了遍历 AST 时的死循环 Bug。
+#     High-precision fix: resolves an infinite-loop bug during AST traversal.
 #     """
 #     if not code or len(code.strip()) == 0:
 #         return ""
@@ -96,36 +96,36 @@ if __name__ == "__main__":
 #         structure_tokens = []
 #         cursor = tree.walk()
         
-#         # 标记状态：是否刚刚从子节点回溯上来
+#         # Track whether traversal just returned from a child node.
 #         visited_children = False
         
 #         while True:
-#             # 1. 提取节点信息的逻辑 (保持不变)
+#             # 1. Node extraction logic, unchanged.
 #             if not visited_children and cursor.node.is_named:
 #                 node_type = cursor.node.type
 #                 if node_type in ["identifier", "type_identifier", "field_identifier", "call_expression"]:
 #                     node_text = code[cursor.node.start_byte : cursor.node.end_byte]
-#                     # 简单清洗一下换行符
+#                     # Clean up newlines.
 #                     node_text = node_text.replace("\n", "").strip()
 #                     structure_tokens.append(f"{node_type}:{node_text}")
 #                 else:
 #                     structure_tokens.append(node_type)
 
-#             # 2. 光标移动逻辑 (❌ 之前死循环的地方)
+#             # 2. Cursor movement logic, which previously caused the infinite loop.
 #             # -------------------------------------------------
-#             # 关键修复：只有当 NOT visited_children 时，才尝试进入子节点
+#             # Key fix: only try to enter child nodes when NOT visited_children.
 #             if not visited_children and cursor.goto_first_child():
 #                 visited_children = False
             
-#             # 如果不能向下，就尝试向右（兄弟节点）
+#             # If traversal cannot go down, try the next sibling.
 #             elif cursor.goto_next_sibling():
 #                 visited_children = False
             
-#             # 如果不能向右，就尝试向上（回溯父节点）
+#             # If traversal cannot go right, go up to the parent.
 #             elif cursor.goto_parent():
 #                 visited_children = True
             
-#             # 如果都不能，说明遍历结束
+#             # If no movement is possible, traversal is complete.
 #             else:
 #                 break
 #             # -------------------------------------------------
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
 
 
-# # --- 验证测试 ---
+# # --- Validation test ---
 # if __name__ == "__main__":
 #     test_code = """
 #     int main() {
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 #         return 0;
 #     }
 #     """
-#     print("开始提取...")
+#     print("Start extraction...")
 #     result = extract_cpg_structure(test_code)
-#     print("提取完成！")
+#     print("Extraction complete!")
 #     print(result)
